@@ -1,12 +1,7 @@
 class DCD(nn.Module):
-    """
-    DCD (Dual-Context Diffusion) Block
-    --------------------------------------------------
-    设计目标：
-    1. 独立使用：通过 Context->Local 的加法扩散提升特征判别力。
-    2. 配合注意力：输出无损特征幅度，完美适配外部 SE/SA 模块。
-    3. 轻量化：Split + Depthwise Conv。
-    """
+
+    #DCD (Dual-Context Diffusion) Block
+
     def __init__(self, c1, c2, ratio=1.0, k=3, s=1):
         super().__init__()
         c_mid = int(c2 * ratio)
@@ -19,7 +14,7 @@ class DCD(nn.Module):
         # 使用空洞卷积 (Dilation=2)
         self.dw_context = nn.Conv2d(self.dim, self.dim, k, s, autopad(k, d=2), 
                                     dilation=2, groups=self.dim, bias=False)
-        self.bn_context = nn.BatchNorm2d(self.dim) # 必须BN，确保分布一致
+        self.bn_context = nn.BatchNorm2d(self.dim) # BN，确保分布一致
 
         # 3. 局部分支 (Local Branch): 接收背景注入
         # 标准 3x3 卷积
